@@ -30,9 +30,18 @@
         <a href="{{ route('pos.index') }}" class="btn btn-warning btn-sm">
             <i class="bi bi-cart3"></i> Punto de Venta
         </a>
-        <a href="{{ route('admin.productos.index') }}" class="btn btn-outline-light btn-sm">
-            <i class="bi bi-gear"></i> Administración
-        </a>
+        <a href="{{ route('admin.ventas.index') }}" class="btn btn-outline-light btn-sm">
+    <i class="bi bi-clock-history"></i> Ventas
+</a>
+<a href="{{ route('admin.clientes.index') }}" class="btn btn-outline-light btn-sm">
+    <i class="bi bi-people"></i> Clientes
+</a>
+<a href="{{ route('admin.reportes.index') }}" class="btn btn-outline-light btn-sm">
+    <i class="bi bi-bar-chart"></i> Reportes
+</a>
+<a href="{{ route('admin.productos.index') }}" class="btn btn-outline-light btn-sm">
+    <i class="bi bi-gear"></i> Administración
+</a>
     </div>
 </nav>
 
@@ -54,6 +63,10 @@
                    class="nav-link {{ request()->is('admin/reportes*') ? 'active' : '' }}">
                     <i class="bi bi-bar-chart"></i> Reportes
                 </a>
+                <a href="{{ route('admin.ventas.index') }}"
+   class="nav-link {{ request()->is('admin/ventas*') ? 'active' : '' }}">
+    <i class="bi bi-clock-history"></i> Ventas
+</a>
             </nav>
         </div>
         <div class="col-md-10 py-4 px-4">

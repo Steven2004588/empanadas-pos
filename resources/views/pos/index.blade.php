@@ -6,13 +6,21 @@
 
     {{-- Mensaje de éxito --}}
     <div x-show="ventaExitosa"
-         x-transition
-         class="alert alert-success alert-dismissible mb-3"
-         style="display:none">
-        <i class="bi bi-check-circle-fill"></i>
-        <strong>¡Venta registrada!</strong> Total: $<span x-text="formatear(ultimoTotal)"></span>
-        <button type="button" class="btn-close" @click="ventaExitosa = false"></button>
+     x-transition
+     class="alert alert-success alert-dismissible mb-3"
+     style="display:none">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div>
+            <i class="bi bi-check-circle-fill"></i>
+            <strong>¡Venta registrada!</strong>
+            Total: $<span x-text="formatear(ultimoTotal)"></span>
+        </div>
+        <a :href="'/admin/ventas/' + ultimaVentaId" class="btn btn-sm btn-success border-white">
+            <i class="bi bi-eye"></i> Ver venta
+        </a>
     </div>
+    <button type="button" class="btn-close" @click="ventaExitosa = false"></button>
+</div>
 
     <div class="row g-3" style="height: calc(100vh - 120px);">
 
@@ -276,29 +284,41 @@ function pos() {
         },
 
         async buscar() {
-            if (!this.documentoBuscar) return;
-            this.clienteEncontrado = false;
-            this.clienteNoEncontrado = false;
+    if (!this.documentoBuscar) return;
+    this.clienteEncontrado = false;
+    this.clienteNoEncontrado = false;
 
-            const res = await fetch('{{ route("pos.buscar-cliente") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ documento: this.documentoBuscar })
-            });
-            const data = await res.json();
+    try {
+        const res = await fetch('{{ route("pos.buscar-cliente") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ documento: this.documentoBuscar })
+        });
 
-            if (data.found) {
-                this.clienteEncontrado = true;
-                this.clienteId = data.cliente.id;
-                this.clienteNombre = data.cliente.nombre_completo;
-            } else {
-                this.clienteNoEncontrado = true;
-                this.nuevoCliente.numero_documento = this.documentoBuscar;
-            }
-        },
+        if (!res.ok) {
+            this.clienteNoEncontrado = true;
+            this.nuevoCliente.numero_documento = this.documentoBuscar;
+            return;
+        }
+
+        const data = await res.json();
+
+        if (data.found) {
+            this.clienteEncontrado = true;
+            this.clienteId = data.cliente.id;
+            this.clienteNombre = data.cliente.nombre_completo;
+        } else {
+            this.clienteNoEncontrado = true;
+            this.nuevoCliente.numero_documento = this.documentoBuscar;
+        }
+    } catch (e) {
+        this.clienteNoEncontrado = true;
+        this.nuevoCliente.numero_documento = this.documentoBuscar;
+    }
+},
 
         confirmarCliente() {
             this.clienteSeleccionado = true;
@@ -354,12 +374,13 @@ function pos() {
             const data = await res.json();
 
             if (data.success) {
-                this.ultimoTotal = data.total;
-                this.ventaExitosa = true;
-                this.limpiarCarrito();
-                this.quitarCliente();
-                setTimeout(() => this.ventaExitosa = false, 5000);
-            }
+    this.ultimoTotal = data.total;
+    this.ultimaVentaId = data.venta_id;
+    this.ventaExitosa = true;
+    this.limpiarCarrito();
+    this.quitarCliente();
+    setTimeout(() => this.ventaExitosa = false, 8000);
+}
             this.procesando = false;
         }
     }

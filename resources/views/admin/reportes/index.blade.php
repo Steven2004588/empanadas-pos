@@ -150,7 +150,9 @@
         },
         options: {
             responsive: true,
-            plugins: { legend: { position: 'bottom' } }
+            plugins: {
+                legend: { position: 'bottom' }
+            }
         }
     });
     @endif
@@ -163,15 +165,14 @@
             datasets: [{
                 label: 'Clientes',
                 data: {!! json_encode($clientesPorCiudad->pluck('total')->toArray()) !!},
-                backgroundColor: colores,
+                backgroundColor: colores.slice(0, {{ $clientesPorCiudad->count() }}),
                 borderRadius: 8,
             }]
         },
         options: {
-            indexAxis: 'y',
             responsive: true,
             plugins: { legend: { display: false } },
-            scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
         }
     });
     @endif

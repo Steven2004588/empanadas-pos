@@ -17,17 +17,17 @@ class PosController extends Controller
     }
 
     public function buscarCliente(Request $request)
-    {
-        $cliente = Cliente::where('numero_documento', $request->documento)
-                          ->where('es_mostrador', false)
-                          ->first();
+{
+    $cliente = Cliente::where('numero_documento', $request->documento)
+                      ->whereRaw('"es_mostrador" = false')
+                      ->first();
 
-        if ($cliente) {
-            return response()->json(['found' => true, 'cliente' => $cliente]);
-        }
-
-        return response()->json(['found' => false]);
+    if ($cliente) {
+        return response()->json(['found' => true, 'cliente' => $cliente]);
     }
+
+    return response()->json(['found' => false]);
+}
 
     public function crearCliente(Request $request)
     {

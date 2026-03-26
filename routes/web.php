@@ -5,6 +5,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\Admin\ProductoController;
 use App\Http\Controllers\Admin\ClienteController;
 use App\Http\Controllers\Admin\ReporteController;
+use App\Http\Controllers\Admin\VentaController;
 
 // Ruta raíz redirige al POS
 Route::get('/', fn() => redirect()->route('pos.index'));
@@ -35,4 +36,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Reportes
     Route::get('reportes', [ReporteController::class, 'index'])->name('reportes.index');
+    Route::get('ventas', [VentaController::class, 'index'])->name('ventas.index');
+Route::get('ventas/{venta}', [VentaController::class, 'show'])->name('ventas.show');
 });
