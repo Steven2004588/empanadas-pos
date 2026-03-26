@@ -28,15 +28,16 @@ class ReporteController extends Controller
             ->limit(5)
             ->get();
 
-        // Ventas mostrador vs clientes registrados
-        $ventasMostrador  = Venta::whereHas('cliente', fn($q) => $q->where('es_mostrador', true))
+        // ✅ Corregido para PostgreSQL
+        $ventasMostrador = Venta::whereHas('cliente', fn($q) => $q->whereRaw('"es_mostrador" = true'))
                                   ->whereBetween('fecha', [$desde, $hasta.' 23:59:59'])->count();
-        $ventasRegistradas = Venta::whereHas('cliente', fn($q) => $q->where('es_mostrador', false))
+
+        $ventasRegistradas = Venta::whereHas('cliente', fn($q) => $q->whereRaw('"es_mostrador" = false'))
                                    ->whereBetween('fecha', [$desde, $hasta.' 23:59:59'])->count();
 
-        // Clientes por ciudad
+        // ✅ Corregido para PostgreSQL
         $clientesPorCiudad = Cliente::select('ciudad', DB::raw('count(*) as total'))
-            ->where('es_mostrador', false)
+            ->whereRaw('"es_mostrador" = false')
             ->whereNotNull('ciudad')
             ->groupBy('ciudad')
             ->orderByDesc('total')

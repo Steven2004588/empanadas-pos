@@ -20,23 +20,26 @@ class ProductoController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'nombre'      => 'required|string|max:100',
-            'descripcion' => 'nullable|string',
-            'precio'      => 'required|numeric|min:0',
-        ]);
+{
+    $request->validate([
+        'nombre'      => 'required|string|max:100',
+        'descripcion' => 'nullable|string',
+        'precio'      => 'required|numeric|min:0',
+    ]);
 
-        Producto::create([
-            'nombre'      => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'precio'      => $request->precio,
-            'activo'      => $request->has('activo'), // ✅ retorna true/false nativo
-        ]);
+    \DB::statement("
+        INSERT INTO productos (nombre, descripcion, precio, activo, created_at, updated_at)
+        VALUES (?, ?, ?, ?::boolean, now(), now())
+    ", [
+        $request->nombre,
+        $request->descripcion,
+        $request->precio,
+        $request->has('activo') ? 'true' : 'false',
+    ]);
 
-        return redirect()->route('admin.productos.index')
-                         ->with('success', 'Producto creado correctamente.');
-    }
+    return redirect()->route('admin.productos.index')
+                     ->with('success', 'Producto creado correctamente.');
+}
 
     public function edit(Producto $producto)
     {
